@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  version: '1'
+  title: API http-сервера GeoControl.
+tags:
+  - name: Auth
+    description: Авторизация.
+  - name: Users
+    description: Операции над пользователями.
+  - name: Map
+    description: Операции, отражаемые на карте.
+  - name: Chat
+    description: Операции над чатом.
+
+paths: 
+  /api/auth:
+    post:
+      tags:
+        - Auth
+      summary: Авторизоваться.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthData'
+        description: Авторизационные данные - логин и пароль.
+      responses:
+        '200':
+          description: Авторизация прошла успешно.
+        '400':
+          description: Неверный логин или пароль.
+        '500':
+          description: Ошибка на стороне сервера.
+          
+components:
+  schemas:
+    AuthData:
+      description: Данные для авторизации.
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+          example: "Anastasia"
+          description: Пользовательский логин.
+        password:
+          type: string
+          example: "Qwerty123"
+          description: Пользовательский пароль.   
