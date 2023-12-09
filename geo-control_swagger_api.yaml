@@ -22,11 +22,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthData'
+              $ref: '#/components/schemas/AuthRequestData'
         description: Авторизационные данные - логин и пароль.
       responses:
         '200':
           description: Авторизация прошла успешно.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponseData'
         '400':
           description: Неверный логин или пароль.
         '500':
@@ -34,7 +38,7 @@ paths:
           
 components:
   schemas:
-    AuthData:
+    AuthRequestData:
       description: Данные для авторизации.
       type: object
       required:
@@ -48,4 +52,24 @@ components:
         password:
           type: string
           example: "Qwerty123"
-          description: Пользовательский пароль.   
+          description: Пользовательский пароль.
+    AuthResponseData:
+      description: Ответ на успешную авторизацию.
+      type: object
+      required:
+        - id
+        - userType
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "8F9619FF-8B86-D011-B42D-00CF4FC964FF"
+          description: Идентификатор пользователя.
+        userType:
+          type: string
+          enum:
+            - PARENT
+            - CHILD
+          example: PARENT
+          description: Тип данного пользователя - родитель или ребенок.
+    
