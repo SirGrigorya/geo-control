@@ -5,8 +5,10 @@ info:
 tags:
   - name: Auth
     description: Авторизация.
-  - name: Users
-    description: Операции над пользователями.
+  - name: Parents
+    description: Операции над пользователями-родителями.
+  - name: Children
+    description: Операции над пользователями-детьми.
   - name: Map
     description: Операции, отражаемые на карте.
   - name: Chat
@@ -35,7 +37,41 @@ paths:
           description: Неверный логин или пароль.
         '500':
           description: Ошибка на стороне сервера.
-          
+  
+  /api/parents/{login}:
+    get:
+      tags:
+        - Parents
+      summary: Получить данные o пользователе-родителе по логину.
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Авторизационные данные в формате Basic (RFC 7617). Логин и пароль в формате 'Basic <BASE64 представление строки логин:пароль>'. 
+          example: 'Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=='
+        - name: login
+          in: path
+          description: Логин пользователя-родителя.
+          example: "Anastasia"
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Запрос выполнен успешно.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Parent"
+        "401":
+          description: Неверные авторизационные данные в хедере Authorization, либо их отсутствие.
+        "500":
+          description: Внутренняя ошибка сервера.
+
 components:
   schemas:
     AuthRequestData:
@@ -48,7 +84,7 @@ components:
         login:
           type: string
           example: "Anastasia"
-          description: Пользовательский логин.
+          description: Пользовательский логин. Он же является идентификатором пользователя.
         password:
           type: string
           example: "Qwerty123"
@@ -57,14 +93,8 @@ components:
       description: Ответ на успешную авторизацию.
       type: object
       required:
-        - id
         - userType
       properties:
-        id:
-          type: string
-          format: uuid
-          example: "8F9619FF-8B86-D011-B42D-00CF4FC964FF"
-          description: Идентификатор пользователя.
         userType:
           type: string
           enum:
@@ -72,4 +102,19 @@ components:
             - CHILD
           example: PARENT
           description: Тип данного пользователя - родитель или ребенок.
-    
+    Parent:
+      description: Пользователь-родитель.
+      type: object
+      required:
+        - login
+        - password
+        - children
+      properties:
+        login:
+          type: string
+          example: "Anastasia"
+          description: Пользовательский логин. Он же является идентификатором пользователя.
+        password:
+          type: string
+          example: "Qwerty123"
+          description: Пользовательский пароль.
